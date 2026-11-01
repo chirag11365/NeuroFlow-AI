@@ -1,18 +1,13 @@
-====================================================================
-PROJECT NAME
-====================================================================
+**PROJECT NAME**
 
 NeuroFlow AI - Agentic Document Intelligence Workspace
 
-====================================================================
-PROJECT TYPE
-====================================================================
+
+**PROJECT TYPE**
 
 MERN + JavaScript + Agentic AI, workspace-based document intelligence system
 
-====================================================================
-PRIMARY OBJECTIVE
-====================================================================
+**PRIMARY OBJECTIVE**
 
 Build a MERN + JavaScript + Agentic AI application where a user can:
 
@@ -34,9 +29,8 @@ This IS:
 - free / local AI only
 - offline / fallback capable
 
-====================================================================
-IMPORTANT PROJECT STRUCTURE UPDATE
-====================================================================
+
+**IMPORTANT PROJECT STRUCTURE UPDATE**
 
 THE PROJECT ROOT ALREADY CONTAINS:
 
@@ -49,9 +43,7 @@ DO NOT CREATE:
 
 USE THE EXISTING STRUCTURE ONLY.
 
-====================================================================
-CORE CONSTRAINTS
-====================================================================
+**CORE CONSTRAINTS**
 
 - Frontend inside client/ only
 - Backend inside server/ only
@@ -78,9 +70,7 @@ OFFLINE / FALLBACK RULE
 - If Ollama is down, workflows must still work with deterministic fallback logic.
 - If MongoDB is not configured, the app must run using an in-memory repository.
 
-====================================================================
-FINAL TECH STACK
-====================================================================
+**FINAL TECH STACK**
 
 FRONTEND
 ---------

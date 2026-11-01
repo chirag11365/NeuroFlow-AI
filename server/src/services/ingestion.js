@@ -4,7 +4,7 @@ import pdf from 'pdf-parse/lib/pdf-parse.js';
 import mammoth from 'mammoth';
 import { parse } from 'csv-parse/sync';
 import { repository } from './repository.js';
-import { embed } from './ollama.js';
+import { embed, getEmbeddingModelKey } from './ollama.js';
 
 const MIME_BY_EXT = { '.pdf': 'application/pdf', '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', '.txt': 'text/plain', '.md': 'text/markdown', '.csv': 'text/csv', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
 export const supportedExtensions = Object.keys(MIME_BY_EXT);
@@ -57,7 +57,7 @@ export async function processDocument(document) {
     await repository.deleteWhere('document_chunks', { userId: document.userId, documentId: String(document._id) });
     for (let index = 0; index < chunks.length; index += 1) {
       let vector = null; try { vector = await embed(chunks[index]); } catch { /* keyword retrieval remains available */ }
-      await repository.create('document_chunks', { userId: document.userId, workspaceId: String(document.workspaceId), documentId: String(document._id), chunkIndex: index, text: chunks[index], tokenCountApprox: Math.ceil(chunks[index].length / 4), embedding: vector || [], metadata: {} });
+      await repository.create('document_chunks', { userId: document.userId, workspaceId: String(document.workspaceId), documentId: String(document._id), chunkIndex: index, text: chunks[index], tokenCountApprox: Math.ceil(chunks[index].length / 4), embedding: vector || [], embeddingModel: vector ? getEmbeddingModelKey() : '', metadata: {} });
     }
     return repository.updateById('documents', document._id, { extractedText, summary: summary.summary, metadata: { keyPoints: summary.keyPoints }, status: 'ready', processingError: '', pageCount: null });
   } catch (error) {

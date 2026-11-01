@@ -2,6 +2,10 @@
 
 NeuroFlow AI is a workspace-based document intelligence app. Upload files, search their extracted text, ask questions with source citations, and run structured document workflows. The backend uses MongoDB when configured and an in-memory repository otherwise.
 
+## Live demo
+
+Live demo: (coming soon)
+
 ## Features
 
 - Register, sign in, and manage user-scoped workspaces.
@@ -117,6 +121,3 @@ All routes are mounted under `/api`. Except for health and auth register/login, 
 - OCR quality depends on the image and Tesseract language data available to the server.
 - Demo sample data is seeded only when `SEED_SAMPLE_DATA=true` and `DEMO_USER_PASSWORD` is configured.
 
-## Live demo
-
-Live demo: (coming soon)

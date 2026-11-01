@@ -12,19 +12,19 @@ async function request(url, body, headers = {}, timeout = 45000) {
   } finally { clearTimeout(timer); }
 }
 
-async function openaiRequest(path, body, timeout = 60000) {
-  if (!env.openaiApiKey) throw new Error('LLM_PROVIDER=openai requires OPENAI_API_KEY');
-  return request(`https://api.openai.com/v1/${path}`, body, { Authorization: `Bearer ${env.openaiApiKey}` }, timeout);
+async function geminiRequest(model, method, body, timeout = 60000) {
+  if (!env.geminiApiKey) throw new Error('LLM_PROVIDER=gemini requires GEMINI_API_KEY');
+  const safeModel = encodeURIComponent(model);
+  return request(`https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:${method}`, body, { 'x-goog-api-key': env.geminiApiKey }, timeout);
 }
 
 export async function generate(prompt, format) {
-  if (env.llmProvider === 'openai') {
-    const result = await openaiRequest('chat/completions', {
-      model: env.openaiChatModel,
-      messages: [{ role: 'user', content: prompt }],
-      ...(format === 'json' ? { response_format: { type: 'json_object' } } : {})
+  if (env.llmProvider === 'gemini') {
+    const result = await geminiRequest(env.geminiChatModel, 'generateContent', {
+      contents: [{ role: 'user', parts: [{ text: prompt }] }],
+      ...(format === 'json' ? { generationConfig: { responseMimeType: 'application/json' } } : {})
     });
-    return result.choices?.[0]?.message?.content || '';
+    return result.candidates?.[0]?.content?.parts?.map((part) => part.text || '').join('') || '';
   }
   if (env.llmProvider !== 'ollama') throw new Error(`Unsupported LLM_PROVIDER: ${env.llmProvider}`);
   const result = await request(`${env.ollamaUrl}/api/generate`, { model: env.ollamaChatModel, prompt, stream: false, ...(format ? { format } : {}) });
@@ -32,17 +32,20 @@ export async function generate(prompt, format) {
 }
 
 export async function embed(text) {
-  if (env.llmProvider === 'openai') {
-    const result = await openaiRequest('embeddings', { model: env.openaiEmbedModel, input: text }, 30000);
-    return result.data?.[0]?.embedding;
+  if (env.llmProvider === 'gemini') {
+    const result = await geminiRequest(env.geminiEmbedModel, 'embedContent', {
+      content: { parts: [{ text }] },
+      output_dimensionality: 768
+    }, 30000);
+    return result.embedding?.values || result.embeddings?.[0]?.values || [];
   }
   if (env.llmProvider !== 'ollama') throw new Error(`Unsupported LLM_PROVIDER: ${env.llmProvider}`);
   const result = await request(`${env.ollamaUrl}/api/embeddings`, { model: env.ollamaEmbedModel, prompt: text }, {}, 20000);
-  return result.embedding;
+  return result.embedding || [];
 }
 
 export function getEmbeddingModelKey() {
-  return env.llmProvider === 'openai' ? `openai:${env.openaiEmbedModel}` : `ollama:${env.ollamaEmbedModel}`;
+  return env.llmProvider === 'gemini' ? `gemini:${env.geminiEmbedModel}:768` : `ollama:${env.ollamaEmbedModel}`;
 }
 
 export async function parseJson(prompt) {

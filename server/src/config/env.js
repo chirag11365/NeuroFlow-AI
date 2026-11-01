@@ -15,7 +15,7 @@ export const env = {
   ollamaChatModel: process.env.OLLAMA_CHAT_MODEL || 'llama3.1:8b',
   ollamaEmbedModel: process.env.OLLAMA_EMBED_MODEL || 'nomic-embed-text',
   llmProvider: (process.env.LLM_PROVIDER || 'ollama').toLowerCase(),
-  openaiApiKey: process.env.OPENAI_API_KEY || '',
-  openaiChatModel: process.env.OPENAI_CHAT_MODEL || 'gpt-6-luna',
-  openaiEmbedModel: process.env.OPENAI_EMBED_MODEL || 'text-embedding-3-small'
+  geminiApiKey: process.env.GEMINI_API_KEY || '',
+  geminiChatModel: process.env.GEMINI_CHAT_MODEL || 'gemini-3.8-flash',
+  geminiEmbedModel: process.env.GEMINI_EMBED_MODEL || 'gemini-embedding-2'
 };

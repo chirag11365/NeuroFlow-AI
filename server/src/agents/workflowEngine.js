@@ -1,6 +1,6 @@
 import { repository } from '../services/repository.js';
 import { retrieve } from '../services/retrieval.js';
-import { parseJson } from '../services/ollama.js';
+import { parseJson } from '../services/aiProvider.js';
 
 const workflowTypes = new Set(['ask', 'summarize', 'compare', 'meeting_action_items', 'research_brief']);
 const sentences = (text) => String(text || '').split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length > 28);

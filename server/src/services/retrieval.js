@@ -1,5 +1,5 @@
 import { repository } from './repository.js';
-import { embed, getEmbeddingModelKey } from './ollama.js';
+import { embed, getEmbeddingModelKey } from './aiProvider.js';
 
 const terms = (text) => String(text || '').toLowerCase().match(/[a-z0-9]{3,}/g) || [];
 function cosine(a, b) { let dot = 0; let aa = 0; let bb = 0; for (let i = 0; i < Math.min(a.length, b.length); i += 1) { dot += a[i] * b[i]; aa += a[i] ** 2; bb += b[i] ** 2; } return dot / (Math.sqrt(aa * bb) || 1); }

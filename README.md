@@ -9,7 +9,7 @@ NeuroFlow AI is a workspace-based document intelligence app. Upload files, searc
 - Extract text, split documents into overlapping chunks, and retrieve passages by embeddings or keyword overlap.
 - Ask questions over a workspace and view citations, workflow history, evaluation notes, and execution traces.
 - Run summarize, compare, meeting action item, and research brief workflows.
-- Use Ollama locally by default, optionally switch to the OpenAI API, or fall back to deterministic workflow logic when AI services are unavailable.
+- Use Ollama locally by default, optionally switch to the Gemini API, or fall back to deterministic workflow logic when AI services are unavailable.
 - Use MongoDB/Mongoose storage or an in-memory repository when MongoDB is unavailable.
 - Deploy the Vite single-page client on Vercel or Netlify with the included client-side route rewrites.
 
@@ -18,11 +18,11 @@ NeuroFlow AI is a workspace-based document intelligence app. Upload files, searc
 - **Client:** React 18, Vite 6, Tailwind CSS 3, React Router 6, TanStack React Query 5, Zustand 5, Axios, lucide-react. `react-hook-form` is included as a dependency; the current screens use native form elements.
 - **Server:** Node.js, Express 4, Mongoose 8, bcryptjs, jsonwebtoken, multer, morgan, dotenv.
 - **Document processing:** pdf-parse, mammoth, csv-parse, tesseract.js. `sharp` is present in the server dependencies but is not currently used by the ingestion path.
-- **AI:** Ollama HTTP API (default models: `llama3.1:8b` and `nomic-embed-text`) or the optional OpenAI Chat Completions and Embeddings APIs.
+- **AI:** Ollama HTTP API (default models: `llama3.1:8b` and `nomic-embed-text`) or the optional Gemini API (default models: `gemini-3.8-flash` and `gemini-embedding-2`).
 
 ## Architecture
 
-The React client sends authenticated API requests to Express. Express handles authentication, uploads, document processing, retrieval, and workflows. The shared repository writes to MongoDB when connected and otherwise uses in-memory storage. AI requests go to the configured local Ollama service or the optional hosted OpenAI API; deterministic fallbacks keep core workflows available when a provider is unavailable.
+The React client sends authenticated API requests to Express. Express handles authentication, uploads, document processing, retrieval, and workflows. The shared repository writes to MongoDB when connected and otherwise uses in-memory storage. AI requests go to the configured local Ollama service or the optional hosted Gemini API; deterministic fallbacks keep core workflows available when a provider is unavailable.
 
 ```mermaid
 flowchart LR
@@ -34,7 +34,7 @@ flowchart LR
   Repo -->|otherwise| Memory[(In-memory repository)]
   Ingest --> AI{LLM_PROVIDER}
   AI -->|ollama| Ollama[Local Ollama]
-  AI -->|openai| OpenAI[OpenAI API]
+  AI -->|gemini| Gemini[Gemini API]
 ```
 
 ## Local setup
@@ -78,7 +78,7 @@ flowchart LR
 
 4. Open `http://localhost:5173`. The API listens on `http://localhost:3001`.
 
-To use OpenAI instead of Ollama, set `LLM_PROVIDER=openai` and provide `OPENAI_API_KEY` in `server/.env`. The server reads that key only; it is never sent to the browser. Set `OPENAI_CHAT_MODEL` and `OPENAI_EMBED_MODEL` if you want different models. OpenAI API use may incur charges.
+To use Gemini instead of Ollama, set `LLM_PROVIDER=gemini` and provide `GEMINI_API_KEY` in `server/.env`. The server reads that key only; it is never sent to the browser. Set `GEMINI_CHAT_MODEL` and `GEMINI_EMBED_MODEL` if you want different models. Gemini API quotas and charges depend on your Google AI plan.
 
 ## API overview
 
@@ -110,7 +110,7 @@ All routes are mounted under `/api`. Except for health and auth register/login, 
 ## Limitations and next steps
 
 - The evaluator currently records a heuristic confidence and note; the repository does not include a benchmark or evaluation dataset.
-- The OpenAI provider is optional and uses a hosted, potentially billable API. Ollama is local-only and is not reachable from a hosted backend unless you provide a reachable Ollama service.
+- The Gemini provider is optional and uses a hosted API. Ollama is local-only and is not reachable from a hosted backend unless you provide a reachable Ollama service.
 - Uploaded files are stored on the server filesystem under `server/uploads`. A hosted deployment needs persistent storage or uploads may be lost when the service restarts or redeploys.
 - In-memory repository data is lost when the server process stops.
 - Switching embedding providers does not automatically re-embed existing chunks. Reprocess documents after changing providers to get consistent vector retrieval; keyword retrieval remains available in the meantime.

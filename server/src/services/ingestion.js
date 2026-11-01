@@ -4,7 +4,7 @@ import pdf from 'pdf-parse/lib/pdf-parse.js';
 import mammoth from 'mammoth';
 import { parse } from 'csv-parse/sync';
 import { repository } from './repository.js';
-import { embed, getEmbeddingModelKey } from './ollama.js';
+import { embed, getEmbeddingModelKey } from './aiProvider.js';
 
 const MIME_BY_EXT = { '.pdf': 'application/pdf', '.docx': 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', '.txt': 'text/plain', '.md': 'text/markdown', '.csv': 'text/csv', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.webp': 'image/webp' };
 export const supportedExtensions = Object.keys(MIME_BY_EXT);
